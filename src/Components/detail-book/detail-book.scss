@@ -1,0 +1,50 @@
+.detail-book-container {
+    width: 360px;
+    padding: 8% 0 0;
+    margin: auto;
+    font-family: "Comfortaa", cursive;
+}
+
+.form input:focus {
+    background: #dbdbdb;
+}
+  
+.form button:active {
+    background: #395591;
+}
+
+.form input:focus {
+    background: #dbdbdb;
+}
+  
+.form button:active {
+    background: #395591;
+}
+  
+.detail-book-span {
+    font-size: 40px;
+    color: #12b76a;
+    margin-bottom: 25px;
+    display: block;
+}
+
+.custom-select {
+    outline: 0;
+    background: #f2f2f2;
+    width: 100%;
+    border: 0;
+    border-radius: 5px;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: "Comfortaa", cursive;
+}
+
+.error {
+    margin: 0 0 3px 3px;
+    text-align: left;
+    font-size: 12px;
+    color: red;
+  }
+

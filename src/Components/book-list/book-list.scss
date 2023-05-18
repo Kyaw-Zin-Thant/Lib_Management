@@ -1,0 +1,31 @@
+.table-title {
+    text-transform: uppercase ;
+    padding: 15px ;
+    color: #12b76a ;
+    font-size: 20px ;
+    -webkit-transition: all 0.3 ease ;
+    transition: all 0.3 ease ;
+}
+
+.create-button {
+    font-family: "Comfortaa", cursive ;
+    text-transform: uppercase ;
+    background: #f36812 ;
+    min-width: 144px ;
+    display: flex ;
+    margin-left: auto ;
+    -webkit-transition: all 0.3 ease ;
+    transition: all 0.3 ease ;
+    margin-right: 20px ;
+    margin-bottom: 10px ;
+    justify-content: center ;
+    align-items: center ;
+}
+.book-table{
+    padding:2% ;
+}
+
+// .spinner-div{
+//     display: flex;
+//     align-items: center;
+// }
