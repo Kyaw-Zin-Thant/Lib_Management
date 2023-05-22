@@ -1,6 +1,6 @@
 import "react-datepicker/dist/react-datepicker.css";
 import "../../styles.scss";
-import "./create-book.scss";
+import "./update-book.scss";
 import React,{useState,useEffect} from "react";
 import * as yup from "yup";
 import { Field, Formik, Form } from "formik";
@@ -24,7 +24,7 @@ const validationSchema = yup.object({
     .required("Book's Language is required"),
   translatorList: yup.array().of(yup.string("Choose Book's Translator")).optional(),
   publisher: yup
-    .string("Choose Books's Publisher").required(),
+    .string("Choose Books's Publisher").optional(),
   publishedDate: yup
     .date()
     .transform(function (value, originalValue) {
@@ -78,10 +78,6 @@ const categoryOptions = [
     value: "Fantasy"
   }
 ];
-// Some dummy author data
-// let authorOptions = [
-// ];
-// Some dummy translator data
 const translatorOptions = [
   {
     label: "Zin",
@@ -98,23 +94,26 @@ const translatorOptions = [
 ];
 
 
-const CreateBook = ({show,setShow}) => {
+const UpdateBook = ({show,setShow,data}) => {
   const handleClose = () => setShow(false);
   const [authorOptions, setauthorOptions] = useState([]);
   const [publisherOptions, setpublisherOptions] = useState([]);
   
+ 
   useEffect(() => {
     getAuthors();
     getPublishers();
   }, []);
+
   //call create book api
-  const createBook = async (values) => {
+  const updateBook = async (values,bookId) => {
     try {
-       await bookAPI.createBook(values);
+      console.log("update book");
+       await bookAPI.updateBook(values,bookId);
       handleClose();
       window.location.reload(false);
     } catch (err) {
-     
+      console.log("update book error");
     } 
   };
 
@@ -151,7 +150,6 @@ const CreateBook = ({show,setShow}) => {
           
         });
         setpublisherOptions(publishers)
-        console.log(publisherOptions+" opt");
       } catch (err) {
       //  console.log(err)
       } 
@@ -171,34 +169,33 @@ const CreateBook = ({show,setShow}) => {
     <div className="create-book-container">
       <Formik
         initialValues={{
-          title: "",
-          authorList: [],
-          categoryList: [],
-          languageList: [],
-          translatorList: [],
-          publisher: "",
-          publishedDate: "01-01-1995",
-          coverType: "",
-          totalPage: 0,
-          summary: ""
+          title: data.title || "",
+          authorList: data.authorsList.length ?  data.authorsList.map(author=>author.id) : [],
+          categoryList: data.categoryList || [],
+          languageList: data.languageList || [],
+          translatorList: data.translatorList || [],
+          publisher: data.publisher.id || "",
+          publishedDate: data.publishedDate || "",
+          coverType: data.coverType || "",
+          totalPage: data.totalPage || 0,
+          summary: data.summary || "",
+          width: data.width || 0,
+          height: data.height || 0,
         }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          console.log(values)
-          values.width =100;
-          values.height =100;
-          createBook(values)
+          updateBook(values,data.id)
          
         }}
       >
         {({ errors, touched }) => {
-          console.log(touched);
+          console.log(errors);
           return (
             <div className="form">
               <Form>
-                <span className="create-book-span">Create A Book</span>
+                <span className="create-book-span">Update A Book</span>
   
-                <Field name="title" type="text" placeholder="Book Title" />
+                <Field name="title" type="text" placeholder="Book Title"/>
                 {errors.title && touched.title ? (
                   <div className="error">{errors.title}</div>
                 ) : null}
@@ -208,18 +205,31 @@ const CreateBook = ({show,setShow}) => {
                   name={"authorList"}
                   options={authorOptions?authorOptions:[]}
                   value={authorOptions?authorOptions:[]}
+                  defaultValue={data?.authorsList.map(author=> {
+                    return {
+                      label: author.firstName +" "+ author.lastName,
+                      value: author.id
+                    }
+                  })}
                   component={CustomSelect}
                   placeholder="Select Book's Authors"
                   isMulti={true}
                   errors={errors}
                   touched={touched}
                 />
+                
   
                 <Field
                   className="custom-select"
                   name={"categoryList"}
                   options={categoryOptions}
                   value={categoryOptions}
+                  defaultValue={data?.categoryList.map(category=> {
+                    return {
+                      label:category,
+                      value: category
+                    }
+                  })}
                   component={CustomSelect}
                   placeholder="Select Book's Catgories"
                   isMulti={true}
@@ -232,18 +242,31 @@ const CreateBook = ({show,setShow}) => {
                   name={"languageList"}
                   options={languageOptions}
                   value={languageOptions}
+                  defaultValue={data?.languageList.map(lang=> {
+                    return {
+                      label:lang,
+                      value: lang
+                    }
+                  })}
                   component={CustomSelect}
                   placeholder="Select Book's Languages"
                   isMulti={true}
                   errors={errors}
                   touched={touched}
                 />
+               
   
                 <Field
                   className="custom-select"
                   name={"translatorList"}
                   options={translatorOptions}
                   value={translatorOptions}
+                  defaultValue={data?.translatorList.map(translator=> {
+                    return {
+                      label:translator,
+                      value: translator
+                    }
+                  })}
                   component={CustomSelect}
                   placeholder="Select Book's Translators"
                   isMulti={true}
@@ -256,19 +279,26 @@ const CreateBook = ({show,setShow}) => {
                   name={"publisher"}
                   options={publisherOptions}
                   value={publisherOptions}
+                  defaultValue={data.publisher.publisherName.split(",").map(pub=> {
+                    return {
+                      label:pub,
+                      value: data.publisher.id
+                    }
+                  })}
                   component={CustomSelect}
                   placeholder="Select Book's Publisher"
                   isMulti={false}
                   errors={errors}
                   touched={touched}
                 />
-                <Field className="custom-datepicker" name="publishedDate" component={CustomDatePicker}/>
+               
+                <Field className="custom-datepicker" name="publishedDate" component={CustomDatePicker} defaultDate={data.publishedDate}/>
 
                 <Field name="coverType" type="text" placeholder="Book Cover Type" />
                 {errors.coverType && touched.coverType ? (
                   <div className="error">{errors.coverType}</div>
                 ) : null}
-                 <Field name="totalPage" type="number" placeholder="Book Total Page" />
+                 <Field name="totalPage" type="number" placeholder="Book Total Page"/>
                 {errors.totalPage && touched.totalPage ? (
                   <div className="error">{errors.totalPage}</div>
                 ) : null}
@@ -284,8 +314,7 @@ const CreateBook = ({show,setShow}) => {
                 {errors.summary && touched.summary ? (
                   <div className="error">{errors.title}</div>
                 ) : null}
-
-                <Button className="create-button" type="submit">Create</Button>
+                <Button className="create-button" type="submit">Update</Button>
               </Form>
             </div>
           )
@@ -298,4 +327,4 @@ const CreateBook = ({show,setShow}) => {
 );
  }
 
-export default CreateBook;
+export default UpdateBook;

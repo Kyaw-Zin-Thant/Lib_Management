@@ -25,7 +25,11 @@
     padding:2% ;
 }
 
-// .spinner-div{
-//     display: flex;
-//     align-items: center;
-// }
+.align-search-create{
+    display: flex;
+    justify-content: space-between;
+}
+.search-box{
+   display: flex ;
+   padding-left: 10%;
+}

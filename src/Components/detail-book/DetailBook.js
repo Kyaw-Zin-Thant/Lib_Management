@@ -13,9 +13,9 @@ const DetailBook = ({data,show,setShow}) => {
   const handleClose = () => setShow(false);
   const [book,setBook] = useState(null);
   useEffect(() => {
-    fetchBooks()
+    fetchBookDetail()
   }, []);
-  const fetchBooks = async () => {
+  const fetchBookDetail = async () => {
     try {
       const res = await bookAPI.detailBook(data);
       setBook(res?.data);
@@ -68,6 +68,8 @@ const DetailBook = ({data,show,setShow}) => {
                   placeholder="Select Book's Authors" 
                   isMulti={true}
                   disable={true}
+                  errors={errors}
+                  touched={touched}
                 />
                <Field
                     className="custom-select"
@@ -88,6 +90,8 @@ const DetailBook = ({data,show,setShow}) => {
                     placeholder="Select Book's Catgories"
                     isMulti={true}
                     disable={true}
+                    errors={errors}
+                    touched={touched}
                   />
                    <Field
                     className="custom-select"
@@ -108,6 +112,8 @@ const DetailBook = ({data,show,setShow}) => {
                     placeholder="Select Book's Languages"
                     isMulti={true}
                     disable={true}
+                    errors={errors}
+                    touched={touched}
                   />
 
                 <Field
@@ -129,29 +135,43 @@ const DetailBook = ({data,show,setShow}) => {
                     placeholder="Select Book's Translators"
                     isMulti={true}
                     disable={true}
+                    errors={errors}
+                    touched={touched}
                   />
 
               <Field
                     className="custom-select"
                     name={"publisher"}
-                    options={book.publisher.split(",").map(pub=> {
+                    options={book.publisher.publisherName.split(",").map(pub=> {
                       return {
                         label:pub,
-                        value: pub
+                        value:book.publisher.id
                       }
                     })}
-                    defaultValue={book.publisher.split(",").map(pub=> {
+                    defaultValue={book.publisher.publisherName.split(",").map(pub=> {
                       return {
                         label:pub,
-                        value: pub
+                        value: book.publisher.id
                       }
                     })}
                     component={CustomSelect}
                     placeholder="Select Book's Publisher"
                     isMulti={false}
                     disable={true}
+                    errors={errors}
+                    touched={touched}
                   />
-                <Field className="custom-datepicker" name="publishedDate" component={CustomDatePicker}/>
+                <Field className="custom-datepicker" name="publishedDate" component={CustomDatePicker} defaultDate={book.publishedDate}/>
+                <Field name="coverType" type="text" placeholder="Book Cover Type" value={book.coverType} disabled />
+               
+                 <Field name="totalPage" type="number" placeholder="Book Total Page"value={book.totalPage} disabled/>
+               
+                 <Field name="width" type="number" placeholder="Book Width" value={book.width} disabled />
+               
+                 <Field name="height" type="number" placeholder="Book Height" value={book.height} disabled />
+                
+                 <Field name="summary" type="textarea" placeholder="Book Summary" value={book.summary} disabled/>
+                
               </Form>
             </div>
           )

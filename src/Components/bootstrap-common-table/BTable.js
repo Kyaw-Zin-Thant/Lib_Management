@@ -6,17 +6,28 @@ import {format} from "date-fns";
 
 import BTPagination from './BTPagination';
 import DetailBook from '../detail-book/DetailBook';
+import DeleteBook from "../delete-book/DeleteBook";
+import bookAPI from "../../API/book"
 
-const customTotal = (from, to, size) => (
-  <span className="react-bootstrap-table-pagination-total">
-    Showing {from} to {to} of {size} Results
-  </span>
-);
-
-const BTable = ({ data, columns,onPageChange,onSizePerPageChange }) => {
+const BTable = ({ data, columns,setData,setShowUpdate,setupdateBook,search,setPage,setLimit }) => {
 
   const [showdetail, setShowDetail] = useState(false);
   const [bookId, setbookId] = useState(null);
+  const [deleteBookId, setdeleteBookId] = useState(null);
+  const [active, setActive] = useState(1);
+  const [showDelete,setshowDelete] = useState(false);
+  const fetchBookDetail = async (bookId) => {
+    try {
+      console.log("Fecccc");
+      const res = await bookAPI.detailBook(bookId);
+      setupdateBook(res?.data);
+      console.log(res.data);
+    } catch (err) {
+     console.log(err);
+    } finally {
+      
+    }
+  }
 
   return (
     <div className="container">
@@ -26,7 +37,7 @@ const BTable = ({ data, columns,onPageChange,onSizePerPageChange }) => {
             <thead>
               <tr>
                 {columns.map(_col=>
-                  <th>{_col.text}</th>
+                  <th>{_col}</th>
                 )}
                 <th>Action</th>
               </tr>
@@ -43,17 +54,22 @@ const BTable = ({ data, columns,onPageChange,onSizePerPageChange }) => {
                             )}
                             </ul>
                         </td>
-                        <td>{d.publisher}</td>
+                        <td>{d.publisher.publisherName}</td>
                         <td>{format(new Date(d.publishedDate),'yyyy-MM-dd')}</td>
                         <td>{format(new Date(d.createdAt),'yyyy-MM-dd')}</td>
                         <td className="action">
                         <button type="button" className="btn btn-primary align-button bi-eye" value={d.id} onClick={ d=>{
-                          console.log(d.target.value);
-                          setbookId(d.target.value)
+                           setbookId(d.target.value)
                            setShowDetail(true)
                        }} ></button>
-                        <button type="button" className="btn btn-success align-button bi-pencil-square"></button>
-                        <button type="button" className="btn btn-danger align-button bi-trash"></button>
+                        <button type="button" className="btn btn-success align-button bi-pencil-square" value={d.id} onClick={d=>{
+                          fetchBookDetail(d.target.value)
+                          setShowUpdate(true);
+                        }}></button>
+                        <button type="button" className="btn btn-danger align-button bi-trash" value={d.id} onClick={d=>{
+                           setdeleteBookId(d.target.value);
+                           setshowDelete(true)
+                        }}></button>
                         </td>
                     </tr>
                 )}
@@ -62,12 +78,13 @@ const BTable = ({ data, columns,onPageChange,onSizePerPageChange }) => {
         </div>
       </div>
       <div className="custom-pagination">
-        <BTPagination data={data.totalBooks}/>  
+        <BTPagination data={data.totalBooks} active={active} setActive={setActive} setData={setData} search={search} setPage={setPage}setLimit={setLimit}/>  
       </div>
      {bookId ?
       <DetailBook data={bookId} show={showdetail} setShow={setbookId} />
       :<></>
      }
+     {showDelete ? <DeleteBook show={showDelete} setShow={setshowDelete} data={deleteBookId}/> :<></>}
     </div>
   )
 };

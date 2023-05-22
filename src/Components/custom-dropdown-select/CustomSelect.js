@@ -3,17 +3,23 @@ import "../../styles.scss";
 import "./custom-select.scss";
 import Select from "react-select";
 
-const CustomSelect = ({ options, isMulti, placeholder,field,form,defaultValue,disable}) => {
+const CustomSelect = ({ options, isMulti, placeholder,field,form,defaultValue,disable,errors,touched}) => {
   const [selectedOptions, setSelectedOptions] = useState();
+  const [firstLoad, setfirstLoad] = useState(true);
   const[isDisabled,setIsDisabled] = useState(false)
+
   const handleSelect = (option) => {
+   
     if (option) {
+     form.setFieldTouched(field.name,true);
      isMulti ? form.setFieldValue(field.name,option.map((op)=>op.value)) : form.setFieldValue(field.name,option.value)
      setSelectedOptions(option);
     }
   };
   useEffect(()=>{
-    setSelectedOptions(defaultValue)
+    
+    firstLoad ? setSelectedOptions(defaultValue) :"";
+    setfirstLoad(false);
     setIsDisabled(disable)
   })
   return (
@@ -30,6 +36,9 @@ const CustomSelect = ({ options, isMulti, placeholder,field,form,defaultValue,di
           className="custom-select"
           isDisabled={isDisabled}
         />
+        {touched[field.name] && errors[field.name] && (
+        <div className="error">{errors[field.name]}</div>
+      )}
       </div>
     </div>
   );

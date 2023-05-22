@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import DatePicker from 'react-datepicker';
 
-const CustomDatePicker = ({field,form}) => {
-    const [startDate, setStartDate] = useState(new Date());
+const CustomDatePicker = ({field,form,defaultDate}) => {
+    const [startDate, setStartDate] = defaultDate ? useState(new Date(defaultDate)): useState(new Date());
   return (
     <div>
       <div className="date-container">
